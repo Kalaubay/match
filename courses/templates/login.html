@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Кіру - Math Course</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+    <div class="auth-card">
+        <h2>Қош келдіңіз!</h2>
+        <p class="subtitle">Жүйеге кіру үшін мәліметтеріңізді енгізіңіз</p>
+        {% if messages %}{% for m in messages %}<div class="error-msg">{{ m }}</div>{% endfor %}{% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group"><label>Gmail</label><input type="email" name="username" required></div>
+            <div class="form-group"><label>Құпия сөз</label><input type="password" name="password" required></div>
+            <button type="submit" class="btn-submit">Кіру</button>
+        </form>
+        <div class="footer-link">Әлі тіркелмедіңіз бе? <a href="{% url 'signup' %}">Тіркелу</a></div>
+    </div>
+</body>
+</html>

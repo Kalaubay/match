@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Тіркелу - Math Course</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+    <div class="auth-card">
+        <h2>Тіркелу</h2>
+        <p class="subtitle">Мәліметтеріңізді енгізіп, растау кодын алыңыз</p>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group"><label>Атыңыз</label><input type="text" name="first_name" required></div>
+                <div class="form-group"><label>Тегіңіз</label><input type="text" name="last_name" required></div>
+            </div>
+            <div class="form-group"><label>Gmail</label><input type="email" name="username" required></div>
+            <div class="form-group"><label>Телефон</label><input type="text" name="phone" required></div>
+            <div class="form-group"><label>Құпия сөз</label><input type="password" name="password" required></div>
+            <button type="submit" class="btn-submit">Код жіберу</button>
+        </form>
+        <div class="footer-link">Аккаунтыңыз бар ма? <a href="{% url 'login' %}">Кіру</a></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Сабақтар тізімі - Math Course{% endblock %}
+
+{% block extra_css %}
+<style>
+    .lessons-container{display:grid;grid-template-columns:1fr;gap:16px;max-width:900px}
+    .lesson-item{background:#fff;padding:20px 25px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);transition:.3s;text-decoration:none}
+    .lesson-item.open:hover{transform:translateX(5px);border-color:var(--primary);box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+    .lesson-info{display:flex;align-items:center;flex:1;margin-right:15px}
+    .lesson-icon{width:40px;height:40px;background:#eff6ff;color:var(--primary);border-radius:50%;display:flex;flex-shrink:0;align-items:center;justify-content:center;margin-right:15px;font-weight:700}
+    .lesson-link{color:#1e293b;font-weight:600;font-size:16px}
+    .locked{background-color:#f1f5f9;cursor:not-allowed;opacity:.8}
+    .locked .lesson-icon{background:#e2e8f0;color:#64748b}
+    .locked .lesson-link{color:#64748b}
+    .status-tag{font-size:13px;font-weight:600;padding:6px 12px;border-radius:20px}
+    .status-open{background:#d1fae5;color:#065f46}
+    .status-locked{background:#e2e8f0;color:#64748b}
+    @media(max-width:600px){.lesson-item{flex-direction:column;align-items:flex-start}.status-tag{width:100%;text-align:center;margin-top:10px}}
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="user-progress-card" style="background:#fff;padding:25px;border-radius:16px;border:1px solid var(--border);margin-bottom:30px;box-shadow:0 4px 12px rgba(0,0,0,0.03)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:15px">
+        <div>
+            <h3 style="margin:0;font-size:18px;color:#1e293b">Сіздің прогресіңіз</h3>
+            <p style="margin:5px 0 0;font-size:14px;color:#64748b">{{ completed_count }} / {{ total_count }} сабақ аяқталды</p>
+        </div>
+        <div style="text-align:right">
+            <span style="font-size:24px;font-weight:800;color:var(--primary)">{{ progress_percent }}%</span>
+        </div>
+    </div>
+
+    <div style="width:100%;height:12px;background:#f1f5f9;border-radius:6px;overflow:hidden;margin-bottom:20px;display:block">
+        <div style="width:{{ progress_percent }}%;height:100%;background:linear-gradient(90deg, #2563eb, #d946ef);transition:1s ease"></div>
+    </div>
+
+    {% if current_lesson_id %}
+    <a href="{% url 'lesson_detail' current_lesson_id %}" 
+       style="display:flex;align-items:center;justify-content:center;background:var(--primary);color:#fff;text-decoration:none;padding:12px;border-radius:10px;font-weight:600;transition:.2s">
+       Сабақты жалғастыру <span style="margin-left:8px">▶</span>
+    </a>
+    {% else %}
+    <div style="text-align:center;padding:10px;background:#f8fafc;border-radius:10px;color:#059669;font-weight:600;font-size:14px">
+        🎉 Барлық сабақты аяқтадыңыз!
+    </div>
+    {% endif %}
+</div>
+
+    <div class="header" style="margin-bottom:30px">
+        <h2 style="font-size:28px;color:#1e293b;margin:0">Математикалық сауаттылық</h2>
+        <p style="color:#64748b">Оқу активтілігіңізді қадағалаңыз</p>
+    </div>
+
+    <div class="lessons-container">
+        {% for lesson in lessons %}
+            {% if user.current_lesson_order >= lesson.order %}
+                <a href="{% url 'lesson_detail' lesson.id %}" class="lesson-item open">
+                    <div class="lesson-info">
+                        <div class="lesson-icon">{{ lesson.order }}</div>
+                        <span class="lesson-link">{{ lesson.title }}</span>
+                    </div>
+                    <span class="status-tag status-open">▶ Қарау</span>
+                </a>
+            {% else %}
+                <div class="lesson-item locked">
+                    <div class="lesson-info">
+                        <div class="lesson-icon">🔒</div>
+                        <span class="lesson-link">{{ lesson.title }}</span>
+                    </div>
+                    <span class="status-tag status-locked">Құлыптаулы</span>
+                </div>
+            {% endif %}
+        {% empty %}
+            <p>Әзірге сабақтар қосылмаған.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

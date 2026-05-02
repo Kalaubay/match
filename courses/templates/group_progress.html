@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="header" style="margin-bottom: 30px;">
+    <h2 style="font-size: 26px; color: #1e293b;">Оқу динамикасы 📈</h2>
+    <p style="color: #64748b;">Қай студент, қай күні, қай сабақта аяқтағаны туралы график</p>
+</div>
+
+<div style="background: white; padding: 30px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+    <canvas id="studentLineChart" style="width: 100%; height: 400px;"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('studentLineChart').getContext('2d');
+    
+    // Түстер палитрасы
+    const colors = ['#2563eb', '#d946ef', '#059669', '#f59e0b', '#7c3aed'];
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ days|safe }},
+            datasets: [
+                {% for student in chart_data %}
+                {
+                    label: '{{ student.name }}',
+                    data: {{ student.data }},
+                    borderColor: colors[{{ forloop.counter0 }} % colors.length],
+                    backgroundColor: colors[{{ forloop.counter0 }} % colors.length] + '20',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    fill: true, // Сызықтың астын сәл бояу
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {% endfor %}
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    title: { display: true, text: 'Сабақ реті (№)', font: { weight: 'bold' } },
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                },
+                x: {
+                    title: { display: true, text: 'Күндер', font: { weight: 'bold' } }
+                }
+            },
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.raw + '-сабақ';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

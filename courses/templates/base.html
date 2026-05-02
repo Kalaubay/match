@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Math Course{% endblock %}</title>
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; --sidebar-bg: #1e293b; --text-main: #334155; --border: #e2e8f0; }
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { display: flex; margin: 0; min-height: 100vh; background-color: var(--bg); }
+
+        /* SIDEBAR - Тұрақты қалып (fixed) */
+        .sidebar { 
+            width: 280px; background-color: var(--sidebar-bg); color: white; padding: 30px 20px; 
+            display: flex; flex-direction: column; position: fixed; height: 100vh; transition: 0.3s; z-index: 100;
+        }
+        .profile-info { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; margin-bottom: 25px; }
+        .profile-info h3 { margin: 0 0 10px; font-size: 12px; text-transform: uppercase; color: #94a3b8; }
+        .profile-info p { margin: 5px 0; font-size: 14px; color: #cbd5e1; }
+        
+        .menu-links { flex-grow: 1; }
+        .menu-links a { display: block; color: #cbd5e1; text-decoration: none; padding: 12px 15px; margin-bottom: 8px; border-radius: 8px; }
+        .menu-links a:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        /* HEATMAP - Ортақ стиль */
+        .activity-wrapper { background: #0f172a; padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #1e293b; }
+        .heatmap-container { display: flex; align-items: center; }
+        .days-labels { display: flex; flex-direction: column; justify-content: space-between; height: 98px; font-size: 10px; margin-right: 10px; color: #64748b; font-weight: bold; text-align: right; }
+        .heatmap { display: grid; grid-template-rows: repeat(7, 12px); grid-auto-flow: column; gap: 3px; }
+        .day-square { width: 12px; height: 12px; background: #ffffff; border-radius: 2px; transition: 0.2s; }
+        .day-square.active { background: #d946ef; box-shadow: 0 0 8px rgba(217, 70, 239, 0.5); }
+        .day-square:hover { transform: scale(1.2); z-index: 10; }
+
+        .logout-btn { background-color: #ef4444; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .content { flex: 1; padding: 50px 80px; margin-left: 280px; transition: 0.3s; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; padding: 20px; }
+            .content { margin-left: 0; padding: 30px 20px; }
+            .menu-links { display: flex; gap: 10px; flex-wrap: wrap; }
+            .activity-wrapper { display: none; } /* Мобильдік нұсқада орын үнемдеу */
+        }
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile-info">
+            <h3>Профиль</h3>
+            <p><strong>{{ user.first_name }} {{ user.last_name }}</strong></p>
+            <p>Деңгей: <strong>{{ user.current_lesson_order }}-сабақ</strong></p>
+        </div>
+        <div class="menu-links">
+            <a href="{% url 'lesson_list' %}">📚 Сабақтар</a>
+            <a href="{% url 'group_progress' %}" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                📊 Топтық прогресс
+            </a>
+        </div>
+
+        {% if user.is_authenticated and activity_data %}
+        <div class="activity-wrapper">
+            <div class="heatmap-container">
+                <div class="days-labels"><span>ПН</span><span>СР</span><span>ПТ</span><span>ВС</span></div>
+                <div class="heatmap">
+                    {% for day in activity_data %}
+                        <div class="day-square {% if day.is_active %}active{% endif %}" title="{{ day.date|date:'d.m.Y' }}"></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <form action="{% url 'logout' %}" method="post" style="margin-top: auto;">
+            {% csrf_token %}<button type="submit" class="logout-btn">Шығу</button>
+        </form>
+    </div>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

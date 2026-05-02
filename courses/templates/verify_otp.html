@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Кодты растау - Math Course</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+    <div class="auth-card" style="text-align: center;">
+        <h2>Кодты енгізіңіз</h2>
+        <p class="subtitle">Почтаңызға келген 6 таңбалы кодты жазыңыз</p>
+        {% if error %}<div class="error-msg">{{ error }}</div>{% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="otp" class="otp-input" maxlength="6" required>
+            </div>
+            <button type="submit" class="btn-submit">Растау</button>
+        </form>
+    </div>
+</body>
+</html>
