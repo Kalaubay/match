@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'courses',
 ]
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

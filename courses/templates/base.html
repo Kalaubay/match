@@ -40,7 +40,13 @@
             .sidebar { width: 100%; height: auto; position: relative; padding: 20px; }
             .content { margin-left: 0; padding: 30px 20px; }
             .menu-links { display: flex; gap: 10px; flex-wrap: wrap; }
-            .activity-wrapper { display: none; } /* Мобильдік нұсқада орын үнемдеу */
+            .activity-wrapper { 
+                display: block; 
+                overflow-x: auto; 
+                padding: 15px;
+                margin-top: 10px;
+            }
+            .heatmap-container { min-width: 300px; }
         }
         {% block extra_css %}{% endblock %}
     </style>
