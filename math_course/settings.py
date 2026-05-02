@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-!@an&7(00u@#x==r=2b^1v0g#pam6hph98dr_ym@jml-8t+b#c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['Zamanbek.pythonanywhere.com', 'localhost', '127.0.0.1']
+# ОСЫЛАЙ ӨЗГЕРТ:
+ALLOWED_HOSTS = ['ka1aubay.pythonanywhere.com', 'www.ka1aubay.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'courses',
 ]
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
 MIDDLEWARE = [
@@ -118,7 +119,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
