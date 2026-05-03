@@ -38,11 +38,9 @@ class Lesson(models.Model):
     video_iframe = models.TextField(
         verbose_name="YouTube IFrame коды", 
         help_text=(
-            "МАҢЫЗДЫ НҰСҚАУЛЫҚ: <br>"
-            "1. YouTube-тен 'Embed' кодын көшіріп алыңыз.<br>"
-            "2. Кодтың ішіне <b>id='player'</b> қосыңыз.<br>"
-            "3. Сілтеме (src) соңына <b>?enablejsapi=1</b> қосыңыз.<br>"
-            "Мысалы: &lt;iframe <b>id='player'</b> ... src='.../embed/ID<b>?enablejsapi=1</b>' ...&gt;&lt;/iframe&gt;"
+            "МАҢЫЗДЫ НҰСҚАУЛЫҚ:"
+            "1. <b>id='player'</b>"
+            "2. ?enablejsapi=1"
         )
     )
     
