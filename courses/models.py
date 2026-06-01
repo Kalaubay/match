@@ -61,10 +61,26 @@ class Lesson(models.Model):
 
 class LessonProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    lesson_order = models.IntegerField() # Қай сабаққа өткені
-    date_completed = models.DateField(auto_now_add=True) # Қай күні
+    lesson_order = models.IntegerField()
+    best_score = models.IntegerField(default=0) 
+    date_completed = models.DateField(auto_now_add=True)
 
     class Meta:
-        ordering = ['date_completed']
-    
+        unique_together = ('user', 'lesson_order')
+
+
+class Question(models.Model):
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='questions')
+    text = models.TextField("Сұрақ мәтіні")
+
+    def __str__(self):
+        return f"{self.lesson.title} - {self.text[:30]}"
+
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='choices')
+    text = models.CharField("Жауап нұсқасы", max_length=255)
+    is_correct = models.BooleanField("Дұрыс нұсқа", default=False)
+
+    def __str__(self):
+        return self.text
 

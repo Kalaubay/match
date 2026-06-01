@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-!@an&7(00u@#x==r=2b^1v0g#pam6hph98dr_ym@jml-8t+b#c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 # ОСЫЛАЙ ӨЗГЕРТ:
 ALLOWED_HOSTS = ['ka1aubay.pythonanywhere.com', 'www.ka1aubay.pythonanywhere.com', 'localhost', '127.0.0.1']
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'nested_admin',
     'courses',
 ]
 STATIC_URL = '/static/'
@@ -136,7 +138,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'zamakalaubay@gmail.com'
-EMAIL_HOST_PASSWORD = 'cjhn flzy rjyd rdvi'
+EMAIL_HOST_PASSWORD = 'eett uehi clew kpeq'
 
 
 

@@ -3,35 +3,156 @@
 
 {% block extra_css %}
 <style>
-    .video-card{background:#fff;padding:24px;border-radius:16px;border:1px solid var(--border);max-width:650px;width:100%;margin:0 auto}
-    .video-container{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;background:#000;margin-top:15px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
-    .video-container iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
-    .back-btn{display:inline-block;margin-bottom:20px;text-decoration:none;color:var(--primary);font-weight:600;font-size:15px;transition:.2s}
-    .back-btn:hover{transform:translateX(-5px)}
-    @media(max-width:768px){.video-card{padding:15px;border-radius:12px;border:none}.video-card h2{font-size:18px;line-height:1.4;margin-bottom:10px}.video-container{border-radius:6px;margin-top:10px}.back-btn{font-size:14px;margin-bottom:15px}}
+    .lesson-wrapper { max-width: 700px; margin: 0 auto; padding-bottom: 50px; }
+    .video-card { background: #fff; padding: 24px; border-radius: 16px; border: 1px solid var(--border); width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+    .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; background: #000; margin-top: 15px; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+    .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    .back-btn { display: inline-block; margin-bottom: 20px; text-decoration: none; color: var(--primary); font-weight: 600; font-size: 15px; transition: .2s; }
+    .back-btn:hover { transform: translateX(-5px); }
+    
+    /* Тест стильдері */
+    .quiz-card { background: #fff; padding: 28px; border-radius: 16px; border: 1px solid var(--border); margin-top: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+    .quiz-card h3 { margin-bottom: 20px; color: #333; font-size: 20px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+    .question-block { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); }
+    .question-block:last-child { border-bottom: none; }
+    .question-text { font-weight: 600; font-size: 16px; color: #222; margin-bottom: 12px; }
+    .choice-label { display: flex; align-items: center; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; font-size: 15px; }
+    .choice-label:hover { background: #f8f9fa; border-color: var(--primary); }
+    .choice-label input { margin-right: 12px; transform: scale(1.1); }
+    
+    .submit-btn { display: block; width: 100%; background: #28a745; color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 15px; }
+    .submit-btn:hover { background: #218838; }
+    .result-msg { margin-top: 15px; padding: 12px; border-radius: 8px; font-weight: 500; display: none; text-align: center; }
+
+    /* Жаңа қосылған қайта тапсыру батырмасының стилі */
+    .retry-btn { margin-top: 15px; background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .retry-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+
+    @media(max-width:768px){
+        .video-card, .quiz-card { padding: 16px; border-radius: 12px; border: none; }
+        .video-card h2 { font-size: 18px; line-height: 1.4; margin-bottom: 10px; }
+        .video-container { border-radius: 6px; margin-top: 10px; }
+        .back-btn { font-size: 14px; margin-bottom: 15px; }
+        .quiz-card h3 { font-size: 18px; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="lesson-wrapper">
     <a href="{% url 'lesson_list' %}" class="back-btn">← Сабақтар тізіміне қайту</a>
+    
     <div class="video-card">
         <h2>{{ lesson.title }}</h2>
-        <div class="video-container" id="player-wrapper">{{ lesson.video_iframe|safe }}</div>
+        <div class="video-container">
+            {{ lesson.video_iframe|safe }}
+        </div>
+        <div style="margin-top: 15px; color: #555; line-height: 1.6;">
+            {{ lesson.description|linebreaks }}
+        </div>
     </div>
-    <script>
-        var tag=document.createElement('script');tag.src="https://www.youtube.com/iframe_api";
-        var firstScriptTag=document.getElementsByTagName('script')[0];firstScriptTag.parentNode.insertBefore(tag,firstScriptTag);
-        var player;
-        function onYouTubeIframeAPIReady(){
-            var f=document.querySelector('#player-wrapper iframe');
-            if(f){f.id="youtube-player";var s=f.src;if(s.indexOf('enablejsapi=1')===-1)f.src=s+(s.indexOf('?')===-1?'?':'&')+'enablejsapi=1';
-            player=new YT.Player('youtube-player',{events:{'onStateChange':onPlayerStateChange}})}
+
+    <div class="quiz-card">
+        <h3>Бекіту тесті (Өту шегі: 70%)</h3>
+        
+        {% if lesson.questions.all %}
+            
+            <div id="passed-result-block" style="{% if best_score >= 70 %}display: block;{% else %}display: none;{% endif %} text-align: center; padding: 20px 0;">
+                {% comment %} <div style="font-size: 50px; margin-bottom: 5px;">🎉</div> {% endcomment %}
+                <h3 style="color: #065f46; margin: 0 0 10px 0; border: none; padding: 0;">Сіз бұл сабақтың тестінен сәтті өттіңіз!</h3>
+                <p style="font-size: 16px; color: #1e293b; margin: 5px 0;">
+                    Сіздің ең үздік нәтижеңіз: <strong style="color: var(--primary); font-size: 20px; font-weight: 700;">{{ best_score }}%</strong>
+                </p>
+                <button type="button" class="retry-btn" onclick="showTestForm()">
+                    🔄 Тестті қайта тапсыру
+                </button>
+            </div>
+
+            <form id="quiz-form" style="{% if best_score >= 70 %}display: none;{% else %}display: block;{% endif %}">
+                {% for question in lesson.questions.all %}
+                    <div class="question-block">
+                        <p class="question-text">{{ forloop.counter }}. {{ question.text }}</p>
+                        {% for choice in question.choices.all %}
+                            <label class="choice-label">
+                                <input type="radio" name="question_{{ question.id }}" value="{{ choice.id }}" required>
+                                {{ choice.text }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                
+                <div id="result-box" class="result-msg"></div>
+                <button type="button" class="submit-btn" onclick="submitQuiz()">Тестті тексеру</button>
+            </form>
+        {% else %}
+            <p style="color: #666; font-style: italic;">Бұл сабаққа әлі тест сұрақтары қосылмаған.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// "Қайта тапсыру" батырмасын басқанда сұрақтарды ашу
+function showTestForm() {
+    document.getElementById('passed-result-block').style.display = 'none';
+    const quizForm = document.getElementById('quiz-form');
+    quizForm.style.display = 'block';
+    quizForm.reset(); // Ескі таңдалған жауаптарды тазалау
+    document.getElementById('result-box').style.display = 'none';
+}
+
+function submitQuiz() {
+    const form = document.getElementById('quiz-form');
+    
+    if (!form.checkValidity()) {
+        alert("Өтініш, барлық сұрақтың жауабын белгілеңіз!");
+        return;
+    }
+
+    const submitBtn = document.querySelector('.submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Тексеріліп жатыр...";
+
+    const formData = new FormData(form);
+    const resultBox = document.getElementById('result-box');
+
+    fetch("{% url 'check_test' lesson.id %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "X-Requested-With": "XMLHttpRequest"
         }
-        function onPlayerStateChange(e){
-            if(e.data==YT.PlayerState.ENDED){
-                fetch("{% url 'complete_lesson' lesson.id %}",{method:"POST",headers:{"X-CSRFToken":"{{ csrf_token }}","X-Requested-With":"XMLHttpRequest"}})
-                .then(r=>{if(r.ok){alert("Керемет! Келесі сабақ ашылды!");window.location.href="{% url 'lesson_list' %}"}})
-            }
+    })
+    .then(response => response.json())
+    .then(data => {
+        resultBox.style.display = "block";
+        resultBox.textContent = data.message;
+
+        if (data.status === 'passed') {
+            resultBox.style.background = "#d4edda";
+            resultBox.style.color = "#155724";
+            resultBox.style.border = "1px solid #c3e6cb";
+            
+            // Жаңарту: База жаңа нәтижені бекіту үшін парақшаны 2 секундтан кейін қайта жүктейді
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            resultBox.style.background = "#f8d7da";
+            resultBox.style.color = "#721c24";
+            resultBox.style.border = "1px solid #f5c6cb";
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Тестті қайта тексеру";
         }
-    </script>
+    })
+    .catch(error => {
+        console.error("Қате кетті:", error);
+        alert("Сервермен байланыс үзілді. Қайта көріңіз.");
+        
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Тестті тексеру";
+    });
+}
+</script>
 {% endblock %}
