@@ -5,7 +5,8 @@ from django.contrib.auth import views as auth_views
 from courses.views import (
     signup_view, 
     verify_otp_view, 
-    lesson_list, 
+    lesson_list,
+    homework, 
     lesson_detail, 
     check_test,      # Жаңа қосқан тест тексеру функциямыз
     group_progress
@@ -21,6 +22,7 @@ urlpatterns = [
     
     # Сабақтар мен Прогресс бағыттары
     path('', lesson_list, name='lesson_list'),
+    path('homework/', homework, name='homework'),
     path('lesson/<int:lesson_id>/', lesson_detail, name='lesson_detail'),
     path('group_progress/', group_progress, name='group_progress'),
     

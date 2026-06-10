@@ -132,6 +132,9 @@ def lesson_list(request):
         'current_lesson_id': current_lesson.id if current_lesson else None
     })
 
+@login_required
+def homework(request):
+    return render(request, 'homework.html')
 
 @login_required
 def check_test(request, lesson_id):
@@ -171,8 +174,6 @@ def check_test(request, lesson_id):
         if score_percent >= 70:
             today_date = timezone.now().date()
             
-            # 🛡️ ҚАТАРЛАС СҰРАНЫСТАРДАН САҚТАНУ (RACE CONDITION FIX)
-            # Алдымен бүгінгі күннің бар-жоғын тексереміз
             activity_exists = UserActivity.objects.filter(user=request.user, date=today_date).exists()
             if not activity_exists:
                 try:
