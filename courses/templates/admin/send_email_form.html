@@ -1,0 +1,43 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div style="max-width: 700px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin: 20px auto;">
+    <h2 style="margin-top: 0; color: #1e293b;">📨 Пайдаланушыларға email хабарлама жіберу</h2>
+    <p style="color: #64748b; margin-bottom: 20px;">Хабарлама мына қолданушылардың почтасына жіберіледі (Барлығы: {{ users.count }}):</p>
+    
+    <div style="max-height: 100px; overflow-y: auto; background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 25px; border: 1px solid #e2e8f0;">
+        {% for u in users %}
+            <span style="display: inline-block; background: #e2e8f0; padding: 3px 8px; margin: 3px; border-radius: 4px; font-size: 13px;">
+                {{ u.username }} ({% if u.email %}{{ u.email }}{% else %}почта жоқ❌{% endif %})
+            </span>
+        {% endfor %}
+    </div>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 5px; color: #334155;">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        {% for obj in users %}
+            <input type="hidden" name="_selected_action" value="{{ obj.pk }}" />
+        {% endfor %}
+
+        <input type="hidden" name="action" value="send_email_to_users" />
+        <input type="hidden" name="apply" value="True" />
+        
+        <div style="margin-top: 25px; display: flex; gap: 10px;">
+            <button type="submit" style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                🚀 Хатты жіберу
+            </button>
+            <a href="." style="background: #64748b; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600;">
+                Бас тарту
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
